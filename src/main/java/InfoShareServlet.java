@@ -10,14 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 @WebServlet("/infoShareAcademy")
-public class infoShareServlet extends HttpServlet {
+public class InfoShareServlet extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(infoShareServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(InfoShareServlet.class.getName());
 
     @Inject
     TemplateProvider templateProvider;
@@ -27,26 +26,39 @@ public class infoShareServlet extends HttpServlet {
         resp.setContentType("text/html;charset=UTF-8");
         PrintWriter writer = resp.getWriter();
         writer.println("<!DOCTYPE html><html><body>");
-        writer.println("<script src=\"https://code.jquery.com/jquery-3.4.0.min.js\"></script>");
-        writer.println("<h1>HOMEWORK<h2>");
+        writer.println("<h3>HOMEWORK</h3>");
         writer.println("<div>");
         writer.println("<p>Anna Zabost</p>");
         writer.println("<p>jjdd6-czfureczka</p>");
         LocalDateTime now = LocalDateTime.now();
         writer.println("<p>" + now + "</p>");
         writer.println("</div>");
-        writer.println("<a href=\"#\" class=\"infoShareAcademy\">post</a>");
-        writer.println("<script src=\"/homework5/js/infoShareAcademy.js\"></script>");
+        writer.println("<form method=\"post\" action=\"/infoShareAcademy\">");
+        writer.println("Parametr 1: <input type=\"text\" name=\"param1\"/><br/>");
+        writer.println("Parametr 2: <input type=\"text\" name=\"param2\"/><br/>");
+        writer.println("<input type=\"submit\"/><br/><br/>");
+        writer.println("</form>");
         writer.println("</body></html>\n");
+
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("text/html;charset=UTF-8");
         Template template = templateProvider.getTemplate(getServletContext(), "infoShareAcademy.ftlh");
-        Map<String, Object> model = new HashMap<>();
-        String param = req.getQueryString();
 
-        model.put("result", param);
+        Map<String, Object> model = new HashMap<>();
+        Map<String, String[]> param = req.getParameterMap();
+        Map<String, String> helpMap = new HashMap<>();
+
+        param.entrySet().forEach(entry -> {
+            String key = entry.getKey();
+            String value = String.join(", ", entry.getValue());
+            helpMap.put(key, value);
+        });
+
+        model.put("params", helpMap);
+
         try {
             template.process(model, resp.getWriter());
         } catch (TemplateException e) {

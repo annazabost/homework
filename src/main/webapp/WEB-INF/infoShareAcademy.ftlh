@@ -1,12 +1,11 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome User</title>
+    <title>Homework</title>
 </head>
 <body>
-<p>Działa</p>
-<#if result??>
-    <ul>
-        <li>${result}</li>
-    </ul>
+<#list params as key, value>
+    <p>${key}: ${value}</p>
+</#list>
 </body>
 </html>
